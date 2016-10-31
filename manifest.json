@@ -1,0 +1,21 @@
+{
+	"manifest_version":2,
+	"name":"Firebase SO opener",
+	"description":"opens 50 latest Firebase questions",
+	"version":"0.0.1",
+	
+	"browser_action":{
+		"default_icon":"styles/img/icon.png",
+		"default_popup":"tracker.html"
+	},
+
+	"background":{
+		"scripts":["scripts/js/popup.js"]
+	},
+
+	"permissions":[
+		"background",
+		"https://*.stackexchange.com/",
+		"tabs"
+	]
+}

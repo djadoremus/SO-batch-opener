@@ -1,0 +1,15 @@
+.pu_main {
+	border-radius: 25px;
+	background: #73AD21;
+	padding: 20px;
+	width: 200px;
+	height: 300px;	
+}
+
+.pu_title {
+	width: 50%;
+	margin: 0 auto;
+	text-transform: uppercase;
+	font-style: normal;
+	font-size: 2em;
+}
