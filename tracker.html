@@ -7,5 +7,34 @@
 		<div class="pu_main">
 			<input id="so_open_tickets" type="button"></input>
 		</div>
+		<div class="pu_config">
+			<form>
+				<span class="config_title">Order</span>
+				<select id="config_order">
+					<option value="asc">Ascending</option>
+					<option value="desc">Descending</option>
+				</select><br/>
+				<span class="config_title">Sort</span>
+				<select id="config_sort">
+					<option value="activity">Activity</option>
+					<option value="votes">Votes</option>
+					<option value="creation">Creation</option>
+					<option value="hot">Hot</option>
+					<option value="week">Week</option>
+					<option value="month">Month</option>
+				</select><br/>
+				<span class="config_title">Tag(s)</span>
+				<input type="text" id="config_tags"/><br/>
+				<span class="config_title">Site</span>
+				<input type="text" id="config_site"/><br/>
+				<span class="config_title">Page Size</span>
+				<input type="number" id="config_pagesize"/><br/>
+				<span class="config_title">Refresh</span>
+				<input type="number" id="config_refresh"/><br/>
+				<span class="config_title">After Ticket</span>
+				<input type="number" id="config_afterTicket"/><br/>
+				<input type="button" id="config_save" value="Save Settings"></input>
+			</form>
+		</div>
 	</body>
 </html>
