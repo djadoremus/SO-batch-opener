@@ -36,6 +36,10 @@ var init = function(){
 
 				var sorted = bubbleSort(result.items);
 				for (var i=0; i<sorted.length; i++){
+					if (i==0){
+						configObj.afterTicket = result.items[0].question_id;
+						saveConfig(configObj, false);
+					}
 					if (result.items[i].question_id != configObj.afterTicket){
 						chrome.tabs.create({url:result.items[i].link, active:false}, function(tab){
 
@@ -49,8 +53,6 @@ var init = function(){
 						break;					
 					}
 				}
-				configObj.afterTicket = result.items[0].question_id;
-				saveConfig(configObj, false);
 				alert("opened " + totalOpen + " tickets");
 				configObj.afterTicket = ""+result.items[0].question_id;
 			}
