@@ -8,8 +8,6 @@ document.addEventListener('DOMContentLoaded',
 
 /*
 TODO:
-	- configurable setting (order, sort, tags, site, pagesize)
-		- done; chrome storage needed to retrieve saved preferences
 	- Observer mode - only open tickets after specified ID (set default check after 5 mins)
 
 */
@@ -32,27 +30,24 @@ var init = function(){
 		req.open("GET", url,true);
 		req.onreadystatechange = function(){
 			if (req.readyState == 4){
-				//console.log(req.responseText);
 				var result = JSON.parse(req.responseText);
-				//console.log(result.items.length);
 				var windowId = 1000;
 				var totalOpen = 0;
 
-				/*
-				 * TODO: JsonArrays are unordered list (similar to Lists in java; aside from LinkedList), meaning data retrieved (even if there's a sort parameter) can still be randomly placed. Create sorting based on creation_date or items
-				 */
 				var sorted = bubbleSort(result.items);
 				for (var i=0; i<sorted.length; i++){
-					console.log(result.items[i].question_id + " | " + configObj.afterTicket + " | " + result.items[i].creation_date + " | " + (new Date(result.items[i].creation_date * 1000)));
-					console.log("" + (result.items[i].question_id != configObj.afterTicket));
+					if (i==0){
+						configObj.afterTicket = result.items[0].question_id;
+						saveConfig(configObj, false);
+					}
 					if (result.items[i].question_id != configObj.afterTicket){
 						chrome.tabs.create({url:result.items[i].link, active:false}, function(tab){
-							//tab.url = result.items[i].link;
+
 						});
 						totalOpen++;
 					} else {
 						chrome.tabs.create({url:result.items[i].link, active:false}, function(tab){
-							//tab.url = result.items[i].link;
+
 						});
 						totalOpen++;
 						break;					
@@ -73,15 +68,47 @@ var init = function(){
 	var _refresh = document.getElementById("config_refresh");
 	var _afterTicket = document.getElementById("config_afterTicket");
 
-	//default values
-	_order.value = "desc";
-	_tags.value = "firebase";
-	_site.value = "stackoverflow";
-	_pagesize.value = 10;
-	_refresh.value = 5;
-	_afterTicket.value = 40776844;
 
-	
+	//check chrome.storage for any config settings value
+	chrome.storage.sync.get("config", function(items){
+		if (!chrome.runtime.error){
+			configObj = items.config;
+
+			if (configObj != undefined){
+				console.log("from db - " + JSON.stringify(configObj));
+
+				_order.value = configObj._order;
+				_sort.value = configObj._sort;
+				_tags.value = configObj._tags;
+				_site.value = configObj._site;
+				_pagesize.value = configObj._pagesize;
+				_refresh.value = configObj._refresh;
+				_afterTicket.value = configObj.afterTicket;
+			} else {
+				configObj = {};
+				configObj._sort = "creation"
+				configObj._order = "desc";
+				configObj._tags = "firebase";
+				configObj._site = "stackoverflow";
+				configObj._pagesize = 50;
+				configObj._refresh = 5;
+
+				saveConfig(configObj, false);
+
+				_order.value = configObj._order;
+				_sort.value = configObj._sort;
+				_tags.value = configObj._tags;
+				_site.value = configObj._site;
+				_pagesize.value = configObj._pagesize;
+				_refresh.value = configObj._refresh;
+				_afterTicket.value = configObj.afterTicket;
+			}
+
+		} else {
+			console.log("something happened")
+		}
+	});
+
 	var config_save = document.getElementById("config_save");
 	config_save.addEventListener("click", function(e){
 		configObj._order = _order.options[_order.selectedIndex].value;
@@ -92,13 +119,9 @@ var init = function(){
 		configObj._refresh = _refresh.value;
 		configObj.afterTicket = _afterTicket.value;
 
-
-		console.log(JSON.stringify(configObj));
-		/*
-		 * TODO: Chrome Storage for Config Object
-		 */
+		saveConfig(configObj, true);
 	});
-	config_save.click();
+	//config_save.click();
 };
 
 var bubbleSort = function(items){
@@ -120,4 +143,12 @@ var bubbleSort = function(items){
 	}
 
 	return items;
+}
+
+var saveConfig = function(configObj, showAlert){
+	chrome.storage.sync.set({"config":configObj}, function(){
+		if (showAlert){
+			alert("Configuration saved!");
+		}
+	});
 }

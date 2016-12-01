@@ -16,6 +16,7 @@
 	"permissions":[
 		"background",
 		"https://*.stackexchange.com/",
-		"tabs"
+		"tabs",
+		"storage"
 	]
 }
